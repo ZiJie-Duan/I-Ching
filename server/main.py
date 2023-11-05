@@ -11,6 +11,7 @@ import aioredis
 from typing import Union
 
 from api_models import APIDivinationStart, APIDivinationConsult
+import time
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -63,6 +64,7 @@ async def divination_start(data : APIDivinationStart):
     await app.state.redis.set(data.user_id, back_ground, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", "0", ex=600)
     
+    time.sleep(5)
     return {"master": ai_reply}
 
 
@@ -72,7 +74,7 @@ async def divination_consult(data : APIDivinationConsult):
     if invalid_key(data.key):
         raise CommonERR("invalid_key")
     
-    # 计数器
+    # 计数器 安全检查 确保对话不超过一定长度
     counter = await app.state.redis.get(data.user_id + "-COUNTER-")
     counter = int(counter) if counter else 999
     if counter >= cfg('REDIS_COUNTER'):
@@ -87,6 +89,7 @@ async def divination_consult(data : APIDivinationConsult):
     await app.state.redis.set(data.user_id, back_ground, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", counter+1, ex=600)
 
+    time.sleep(3)
     return {"master": ai_reply}
 
 

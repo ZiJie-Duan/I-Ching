@@ -3,6 +3,7 @@ const user_id = crypto.randomUUID();
 const key = "860d159d-3728-47d6-b8d5-473a698205e6"
 
 function divination_start(hexagram, question){
+    createLoadingPage();
     // 定义请求的URL
     const url = 'http://127.0.0.1:8000/divination/start';
 
@@ -29,6 +30,7 @@ function divination_start(hexagram, question){
     return response.json();
     })
     .then(data => {
+    removeLoadingPage();
     build_talk_box(data.master)
     })
     .catch(error => {
@@ -37,6 +39,7 @@ function divination_start(hexagram, question){
 }
 
 function divination_confusion(question){
+    createLoadingPage();
     // 定义请求的URL
     const url = 'http://127.0.0.1:8000/divination/consult';
 
@@ -62,6 +65,7 @@ function divination_confusion(question){
     return response.json();
     })
     .then(data => {
+    removeLoadingPage();
     build_talk_box(data.master)
     })
     .catch(error => {
@@ -150,3 +154,38 @@ function get_divination_confusion(){
 
 let but = document.getElementById("submitButton_for_hexagram");
 but.addEventListener("click", get_confusion_and_hexagram);
+
+
+// Function to create the loading page
+function createLoadingPage() {
+    // Create the container div for the loading animation
+    let loadingDiv = document.createElement('div');
+    loadingDiv.setAttribute("id", "loadingDiv");
+    loadingDiv.className = 'flex flex-col items-center justify-center';
+
+    // Create the animation div
+    let spinnerDiv = document.createElement('div');
+    spinnerDiv.className = 'animate-spin rounded-full h-32 w-32 border-b-4 border-gray-900';
+
+    // Create the text paragraph
+    let textP = document.createElement('p');
+    textP.className = 'text-lg text-gray-700 mt-4';
+    textP.textContent = '占卜中...';
+
+    // Append the spinner and text to the container
+    loadingDiv.appendChild(spinnerDiv);
+    loadingDiv.appendChild(textP);
+
+    // Return the complete loading page
+    // Get the target div
+    let root_page = document.getElementById('root_page');
+    // Inject the loading page into the target div
+    root_page.appendChild(loadingDiv);
+}
+
+function removeLoadingPage() {
+    // Get the loading page
+    let loadingDiv = document.getElementById('loadingDiv');
+    // Remove the loading page
+    loadingDiv.remove();
+}
