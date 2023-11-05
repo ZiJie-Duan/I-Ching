@@ -1,4 +1,74 @@
 
+const user_id = crypto.randomUUID();
+const key = "860d159d-3728-47d6-b8d5-473a698205e6"
+
+function divination_start(hexagram, question){
+    // 定义请求的URL
+    const url = 'http://127.0.0.1:8000/divination/start';
+
+    // 创建将要发送的数据
+    const data = {
+        key: key,
+        user_id: user_id,
+        hexagram: hexagram,
+        question: question
+    };
+
+    // 使用fetch API发起POST请求
+    fetch(url, {
+    method: 'POST', // 指定请求方法为POST
+    headers: {
+        'Content-Type': 'application/json', // 指定发送的数据类型为JSON
+    },
+    body: JSON.stringify(data), // 将JavaScript对象转换为JSON字符串
+    })
+    .then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json();
+    })
+    .then(data => {
+    build_talk_box(data.master)
+    })
+    .catch(error => {
+    alert(error);
+    });
+}
+
+function divination_confusion(question){
+    // 定义请求的URL
+    const url = 'http://127.0.0.1:8000/divination/consult';
+
+    // 创建将要发送的数据
+    const data = {
+        key: key,
+        user_id: user_id,
+        question: question
+    };
+
+    // 使用fetch API发起POST请求
+    fetch(url, {
+    method: 'POST', // 指定请求方法为POST
+    headers: {
+        'Content-Type': 'application/json', // 指定发送的数据类型为JSON
+    },
+    body: JSON.stringify(data), // 将JavaScript对象转换为JSON字符串
+    })
+    .then(response => {
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    return response.json();
+    })
+    .then(data => {
+    build_talk_box(data.master)
+    })
+    .catch(error => {
+    alert(error);
+    });
+}
+
 
 function remove_talk_box(){
     let talk_box = document.getElementById("talk_box");
@@ -26,7 +96,7 @@ function build_talk_box(ai_message){
     user_text.setAttribute("class", "text-center text-neutral-900 w-4/5 rounded-lg shadow-md");
 
     let submit_button = document.createElement("button");
-    submit_button.setAttribute("id", "submitButton");
+    submit_button.setAttribute("id", "submitButton_for_confution");
     submit_button.setAttribute("class", "text-lg text-center text-neutral-900 bg-neutral-100 hover:bg-neutral-200 px-8 py-2 rounded-lg shadow-md");
     submit_button.textContent = "请示";
 
@@ -35,16 +105,17 @@ function build_talk_box(ai_message){
     talk_box.appendChild(user_text);
     talk_box.appendChild(submit_button);
     root_div.appendChild(talk_box);
+
+    let but2 = document.getElementById("submitButton_for_confution");
+    but2.addEventListener("click", get_divination_confusion);
 }
 
 
-function rebuild_page(){
+function rebuild_page(hexagram_result, confusion_text){
 
-    let page1 = document.getElementById("page1");
-    page1.remove();
-
-    build_talk_box("各位朋友们，听我说，听我说，千万不要小看了周易的威力哦！今天早上，我一揭开《易经》，突然间风云变色，只见电脑屏幕上跳出了三个字：‘更新提示’。我沉思良久，灵光一闪，决定用‘随机卦’应对这一变故。于是乎，左手一挥，三枚硬币在桌面上跳跃如同活泼的小兔，最终竟然呈现出了‘坤为地’的六连阴——这不是告诉我要‘地响’（坚守）等待，不要轻举妄动么？结果，我按损损吾道——也就是不更新，继续我的工作。没想到，不一会儿，电脑就自己开始更新了。看来这‘天机’也是会开小差，偶尔搞个小更新来提醒我们：即便是易经大师，也要记得电脑的自动更新功能是打开的呀！哈哈，记得啊，同学们，做人做事，除了看天意，也别忘了看看‘系统设置’哦！");
-
+    let talk_box = document.getElementById("talk_box");
+    talk_box.remove();
+    divination_start(hexagram_result, confusion_text);
 }
 
 function get_confusion_and_hexagram(){
@@ -59,16 +130,23 @@ function get_confusion_and_hexagram(){
     hexagram_list.forEach(function(hexagram_id){
         checkbox = document.getElementById(hexagram_id);
         if (checkbox.checked){
-            hexagram_result += "正";
+            hexagram_result += "阳";
         } else {
-            hexagram_result += "负";
+            hexagram_result += "阴";
         }
     });
 
-    // alert(hexagram_result);
-    // alert(confusion_text);
-    rebuild_page();
+    rebuild_page(hexagram_result, confusion_text);
 }
 
-let but = document.getElementById("submitButton");
+function get_divination_confusion(){
+    let confusion_elem = document.getElementById("user_text");
+    let confusion_text = confusion_elem.value;
+
+    let talk_box = document.getElementById("talk_box");
+    talk_box.remove();
+    divination_confusion(confusion_text);
+}
+
+let but = document.getElementById("submitButton_for_hexagram");
 but.addEventListener("click", get_confusion_and_hexagram);

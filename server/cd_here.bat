@@ -1,2 +1,2 @@
 @echo off
-start cmd /k "cd /d %~dp0 && title New CMD in Script Location && activate user_service"
+start cmd /k "cd /d %~dp0 && title New CMD in Script Location && activate zb && uvicorn main:app --reload"
