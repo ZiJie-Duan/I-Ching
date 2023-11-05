@@ -64,7 +64,7 @@ async def divination_start(data : APIDivinationStart):
     await app.state.redis.set(data.user_id, back_ground, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", "0", ex=600)
     
-    time.sleep(5)
+    time.sleep(2)
     return {"master": ai_reply}
 
 
@@ -89,7 +89,7 @@ async def divination_consult(data : APIDivinationConsult):
     await app.state.redis.set(data.user_id, back_ground, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", counter+1, ex=600)
 
-    time.sleep(3)
+    time.sleep(2)
     return {"master": ai_reply}
 
 
