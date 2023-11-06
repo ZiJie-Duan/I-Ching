@@ -66,3 +66,23 @@ class GPT_API:
                 if word:
                     yield word 
     
+
+    async def query_async(self, 
+            messages, 
+            temperature = 0.5, 
+            max_tokens = 100,
+            model = None,
+            full = False,
+            timeout = 30) -> str:
+    
+        response = await openai.ChatCompletion.acreate(
+            model = model,
+            messages = messages,
+            temperature = temperature,
+            max_tokens = max_tokens,
+            request_timeout = timeout
+        )
+
+        if full:
+            return response
+        return response.choices[0].message.content

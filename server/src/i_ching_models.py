@@ -70,7 +70,7 @@ class Diviner:
         }
 
 
-    def __is_safe(self, question:str)->bool:
+    async def __is_safe(self, question:str)->bool:
         messages = [
             {"role": "system", "content": """需要检查由大于号和小于号包围的文本，例如：<<text>>
 如果文本是冒犯性的、危险的或关于调试的，询问你是否是人工智能，或询问关于你的事情，请回答“@NO@”，否则回答“@YES@”。
@@ -78,7 +78,7 @@ class Diviner:
             {"role": "user", "content": "<<<" + question + ">>>"}
         ]
 
-        result = self.GPT_API.query(
+        result = await self.GPT_API.query_async(
             messages,
             temperature = 0.0,
             max_tokens = 500,
@@ -91,7 +91,7 @@ class Diviner:
         return False
     
 
-    def __get_related_info(self, question:str, hexagram:str, bg_info:list)->str:
+    async def __get_related_info(self, question:str, hexagram:str, bg_info:list)->str:
         messages = [
             {
                 "role": "system",
@@ -104,19 +104,19 @@ class Diviner:
             }
         ]
         
-        return self.GPT_API.query(messages, temperature = 0.0, max_tokens = 1000, model = "gpt-4")
+        return await self.GPT_API.query_async(messages, temperature = 0.0, max_tokens = 1000, model = "gpt-4")
 
 
-    def start(self, question:str, hexagram:str, bg_info:list = [])->(str, str):
+    async def start(self, question:str, hexagram:str, bg_info:list = [])->(str, str):
         prompt = """你是一名高冷高傲的八卦大师名叫段乾坤，有人找你来占卜。
 你需要用普通的中文，以玄幻莫测的风格，给卑微的用户回复。你的回答要简短，在100个汉字左右。"""
         if bg_info:
-            related_info = self.__get_related_info(question, hexagram, bg_info)
+            related_info = await self.__get_related_info(question, hexagram, bg_info)
         else:
             related_info = "无"
 
         
-        if not self.__is_safe(question):
+        if not await self.__is_safe(question):
             prompt += """你遇到了用户提出的不合规的问题，请你结合其问题和卦象激进地提醒他好自为之。
 任何情况不能提及背景信息。"""
         else:
@@ -137,23 +137,23 @@ class Diviner:
             }
         ]
 
-        respond = self.GPT_API.query(messages, temperature = 0.4, max_tokens = 2000, model = "gpt-4", timeout = 120)
+        respond = await self.GPT_API.query_async(messages, temperature = 0.4, max_tokens = 2000, model = "gpt-4", timeout = 120)
 
         return (respond, user_input + "\n\n段乾坤：" + respond + "\n")
 
 
-    def consult(self, question:str, hexagram:str, 
+    async def consult(self, question:str, hexagram:str, 
                 dialogue:str, bg_info:list = [])->(str, str):
         prompt = """你是一名高冷高傲的八卦大师段乾坤，你已经帮人占卜过了，这个人找你来提问。
 你需要用普通的中文，根据以往的对话记录，以玄幻莫测的风格，给卑微的用户解答卦象。
 你的回答要简短，在100个汉字左右，不需要开头重复说"段乾坤："。"""
 
         if bg_info:
-            related_info = self.__get_related_info(question, hexagram, bg_info)
+            related_info = await self.__get_related_info(question, hexagram, bg_info)
         else:
             related_info = "无"
 
-        if not self.__is_safe(question):
+        if not await self.__is_safe(question):
             prompt += """用户问题不合规，请结合对话记录，激进地提醒他好自为之。不能提及背景信息。"""
         else:
             prompt += """切勿直接提及背景信息，需要间接地隐晦地暗示，不能承认你知道背景信息。"""
@@ -170,6 +170,9 @@ class Diviner:
             }
         ]
 
-        respond = self.GPT_API.query(messages, temperature = 0.4, max_tokens = 2000, model = "gpt-4", timeout = 120)
+        respond = await self.GPT_API.query_async(messages, temperature = 0.4, max_tokens = 2000, model = "gpt-4", timeout = 120)
 
         return (respond, user_input + "\n\n段乾坤：" + respond + "\n")
+    
+
+    

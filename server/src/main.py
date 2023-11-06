@@ -61,7 +61,7 @@ async def divination_start(data : APIDivinationStart):
         raise CommonERR("invalid_key")
 
     # 生成卦象 生成说明
-    ai_message, background_info = diviner.start(data.question, data.hexagram)
+    ai_message, background_info = await diviner.start(data.question, data.hexagram)
     await app.state.redis.set(data.user_id, background_info, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", "0", ex=600)
     await app.state.redis.set(data.user_id + "-HEXAGRAM-", data.hexagram, ex=600)
@@ -88,7 +88,7 @@ async def divination_consult(data : APIDivinationConsult):
     hexagram = await app.state.redis.get(data.user_id + "-HEXAGRAM-")
     back_ground += data.question
     # 生成卦象 生成说明
-    ai_message, background_info = diviner.consult(data.question, 
+    ai_message, background_info = await diviner.consult(data.question, 
                                                   hexagram, 
                                                   back_ground)
 
