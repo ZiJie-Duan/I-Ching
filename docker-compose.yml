@@ -26,7 +26,7 @@ services:
     networks:
       - app-network
     build:
-      context: ./server
+      context: ./zke_server
     image: zke_server:latest
     env_file:
       - ./zkeiching.env
