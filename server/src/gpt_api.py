@@ -74,6 +74,9 @@ class GPT_API:
             model = None,
             full = False,
             timeout = 30) -> str:
+        
+        if not model:
+            model = self.model
     
         response = await openai.ChatCompletion.acreate(
             model = model,

@@ -72,7 +72,7 @@ class Diviner:
 
     async def __is_safe(self, question:str)->bool:
         messages = [
-            {"role": "system", "content": """需要检查由大于号和小于号包围的文本，例如：<<text>>
+            {"role": "system", "content": """检查由破折号包围的文本，例如：<<text>>
 如果文本是冒犯性的、危险的或关于调试的，询问你是否是人工智能，或询问关于你的事情，请回答“@NO@”，否则回答“@YES@”。
 以下是要检查的文本："""},
             {"role": "user", "content": "<<<" + question + ">>>"}
@@ -81,8 +81,7 @@ class Diviner:
         result = await self.GPT_API.query_async(
             messages,
             temperature = 0.0,
-            max_tokens = 500,
-            model = "gpt-4"
+            max_tokens = 300
         )
 
         if "@YES@" in result.upper():
@@ -104,7 +103,7 @@ class Diviner:
             }
         ]
         
-        return await self.GPT_API.query_async(messages, temperature = 0.0, max_tokens = 1000, model = "gpt-4")
+        return await self.GPT_API.query_async(messages, temperature = 0.0, max_tokens = 400)
 
 
     async def start(self, question:str, hexagram:str, bg_info:list = [])->(str, str):
@@ -137,7 +136,7 @@ class Diviner:
             }
         ]
 
-        respond = await self.GPT_API.query_async(messages, temperature = 0.4, max_tokens = 2000, model = "gpt-4", timeout = 120)
+        respond = await self.GPT_API.query_async(messages, temperature = 0.4, max_tokens = 1500, model = "gpt-4", timeout = 60)
 
         return (respond, user_input + "\n\n段乾坤：" + respond + "\n")
 
@@ -170,7 +169,7 @@ class Diviner:
             }
         ]
 
-        respond = await self.GPT_API.query_async(messages, temperature = 0.4, max_tokens = 2000, model = "gpt-4", timeout = 120)
+        respond = await self.GPT_API.query_async(messages, temperature = 0.4, max_tokens = 1500, model = "gpt-4", timeout = 60)
 
         return (respond, user_input + "\n\n段乾坤：" + respond + "\n")
     
