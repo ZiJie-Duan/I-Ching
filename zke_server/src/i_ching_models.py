@@ -94,21 +94,21 @@ class Diviner:
         messages = [
             {
                 "role": "system",
-                "content": """你是信息关联程序，直接给出最多三条在背景信息列表中与"问题"和"卦象"最关联的元素："""
+                "content": """提取背景信息，将背景信息列表中与问题相关的内容总结为一句话，30个字"""
             }, {
                 "role": "user",
-                "content": "问题：{}\n卦象：{}\n背景信息列表：{}".format(
-                    question, self.hexagram_meaning[hexagram], str(bg_info)
+                "content": "问题：{}\n背景信息列表：{}".format(
+                    question,str(bg_info)
                     )
             }
         ]
         
-        return await self.GPT_API.query_async(messages, temperature = 0.0, max_tokens = 400)
+        return await self.GPT_API.query_async(messages, temperature = 0.1, max_tokens = 300)
 
 
     async def start(self, question:str, hexagram:str, bg_info:list = [])->(str, str):
-        prompt = """你是一名高冷高傲的八卦大师名叫段乾坤，有人找你来占卜。
-你需要用普通的中文，以玄幻莫测的风格，给卑微的用户回复。你的回答要简短，在100个汉字左右。"""
+        prompt = """你是一名高冷孤傲的周易占卜大师名叫赵乾坤，有人找你来占卜。
+你需要用中文，以玄幻莫测的风格，给卑微的用户回复。你的回答要简短，在100个汉字左右。"""
         if bg_info:
             related_info = await self.__get_related_info(question, hexagram, bg_info)
         else:
@@ -119,10 +119,13 @@ class Diviner:
             prompt += """你遇到了用户提出的不合规的问题，请你结合其问题和卦象激进地提醒他好自为之。
 任何情况不能提及背景信息。"""
         else:
-            prompt += """一开始要说出卦象六爻的阴阳，然后是卦象的内容。最后结合卦象和背景信息对其问题进行玄幻地占卜。
-切勿直接提及背景信息，需要间接地隐晦地暗示，不能承认你知道背景信息。"""
+            prompt += """说明卦象的内容。结合卦象和背景信息对其问题进行玄幻地占卜。
+通过暗喻结合背景信息回答用户问题，如果用户的问题需要确切的答案
+请正面直接回复，使用其他的事物来隐喻，例如2年就是两个春秋，要坚定自信"""
+
+        print(related_info)
         
-        user_input = "卦象：{} {}\n背景信息：{}\n问题：{}".format(
+        user_input = "卦象：{} {}\n背景信息：{}\n用户问题：{}".format(
             hexagram, self.hexagram_meaning[hexagram], related_info, question
         )
 
@@ -143,9 +146,9 @@ class Diviner:
 
     async def consult(self, question:str, hexagram:str, 
                 dialogue:str, bg_info:list = [])->(str, str):
-        prompt = """你是一名高冷高傲的八卦大师段乾坤，你已经帮人占卜过了，这个人找你来提问。
-你需要用普通的中文，根据以往的对话记录，以玄幻莫测的风格，给卑微的用户解答卦象。
-你的回答要简短，在100个汉字左右，不需要开头重复说"段乾坤："。"""
+        prompt = """你是一名高冷高傲的八卦大师赵乾坤，你的用户请示你一个问题。
+你需要用中文，根据以往的对话记录，以玄幻莫测的风格，给卑微的用户解答卦象。
+你的回答要简短，在100个汉字左右。"""
 
         if bg_info:
             related_info = await self.__get_related_info(question, hexagram, bg_info)
@@ -155,9 +158,12 @@ class Diviner:
         if not await self.__is_safe(question):
             prompt += """用户问题不合规，请结合对话记录，激进地提醒他好自为之。不能提及背景信息。"""
         else:
-            prompt += """切勿直接提及背景信息，需要间接地隐晦地暗示，不能承认你知道背景信息。"""
+            prompt += """通过暗喻结合背景信息回答用户问题，如果用户的问题需要确切的答案
+请正面直接回复，使用其他的事物来隐喻，例如2年就是两个春秋，要坚定自信"""
+
+        print(related_info)
         
-        user_input = "对话记录：{}\n背景信息：{}\n问题：{}".format(dialogue, related_info, question)
+        user_input = "对话记录：{}\n背景信息：{}\n用户问题：{}".format(dialogue, related_info, question)
 
         messages = [
             {
