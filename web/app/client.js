@@ -1,9 +1,9 @@
 
 const appConfig = {
-    apiUrlDivinationStart : 'http://127.0.0.1:5000/divination/start',
-    apiUrlDivinationConsult : 'http://127.0.0.1:5000/divination/consult',
-    userId : crypto.randomUUID(),
-    key : "8ff70a3c-6a74-4928-9d39-4c1648ac1897",
+    apiUrlDivinationStart : 'http://45.32.8.253:5000/divination/start',
+    apiUrlDivinationConsult : 'http://45.32.8.253:5000/divination/consult',
+    userId : generate36DigitRandomNumber(),
+    key : "4c3b427b-4dfa-4da8-bc9f-746a6bc32999",
     confusionLimit : 0,
 }
 
@@ -258,3 +258,14 @@ function createErrPage(data){
     rootPage.appendChild(talk_box);
 
 }
+
+
+function generate36DigitRandomNumber() {
+    let randomNumber = '';
+    for(let i = 0; i < 36; i++) {
+      let digit = Math.floor(Math.random() * 10); // generates a number between 0 and 9
+      randomNumber += digit.toString();
+    }
+    return randomNumber;
+  }
+  

@@ -1,9 +1,9 @@
 
 const appConfig = {
-    apiUrlDivinationStart : 'http://45.32.8.253:5000/divination/start',
-    apiUrlDivinationConsult : 'http://45.32.8.253:5000/divination/consult',
+    apiUrlDivinationStart : 'http://45.32.8.253:4000/divination/start',
+    apiUrlDivinationConsult : 'http://45.32.8.253:4000/divination/consult',
     userId : generate36DigitRandomNumber(),
-    key : "8ff70a3c-6a74-4928-9d39-4c1648ac1897",
+    key : "9757e4cb-4019-420a-be24-4ce5a4cf03bf",
     confusionLimit : 0,
 }
 
