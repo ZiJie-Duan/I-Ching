@@ -1,4 +1,3 @@
-import gpt_api
 
 class Diviner:
     def __init__(self, GPT_API) -> None:
@@ -86,14 +85,13 @@ class Diviner:
             model = "gpt-4"
         )
 
-        print(result)
         if "@YES@" in result.upper():
             return True
         
         return False
     
 
-    def __get_related_info(self, question:str, hexagram:str, bg_info:list[str])->str:
+    def __get_related_info(self, question:str, hexagram:str, bg_info:list)->str:
         messages = [
             {
                 "role": "system",
@@ -109,7 +107,7 @@ class Diviner:
         return self.GPT_API.query(messages, temperature = 0.0, max_tokens = 1000, model = "gpt-4")
 
 
-    def start(self, question:str, hexagram:str, bg_info:list[str])->(str, str):
+    def start(self, question:str, hexagram:str, bg_info:list = [])->(str, str):
         prompt = """你是一名高冷高傲的八卦大师名叫段乾坤，有人找你来占卜。
 你需要用普通的中文，以玄幻莫测的风格，给卑微的用户回复。你的回答要简短，在100个汉字左右。"""
         if bg_info:
@@ -144,7 +142,8 @@ class Diviner:
         return (respond, user_input + "\n\n段乾坤：" + respond + "\n")
 
 
-    def consult(self, question:str, hexagram:str, dialogue:str, bg_info:list[str])->(str, str):
+    def consult(self, question:str, hexagram:str, 
+                dialogue:str, bg_info:list = [])->(str, str):
         prompt = """你是一名高冷高傲的八卦大师段乾坤，你已经帮人占卜过了，这个人找你来提问。
 你需要用普通的中文，根据以往的对话记录，以玄幻莫测的风格，给卑微的用户解答卦象。
 你的回答要简短，在100个汉字左右，不需要开头重复说"段乾坤："。"""

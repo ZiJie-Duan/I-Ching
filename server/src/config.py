@@ -82,7 +82,6 @@ class DockerConfig(Config):
         # 如果存在，则直接返回
         result = os.getenv(section)
         if result:
-            print(f'读取环境变量: {section}')
             return result
         
         # 此段代码用于构建 section_ini 兼容本地.ini配置文件
@@ -98,7 +97,6 @@ class DockerConfig(Config):
         # 如果不存在，检查本地配置文件是否存在
         if self.local_config_exist:
             # 如果存在，则返回本地配置文件中的值
-            print(f'读取本地配置文件: {section_ini}')
             return self.get_value(section_ini)
         # 如果不存在，则抛出异常
         raise KeyError(f'环境变量与配置文件中不存在: {section}')

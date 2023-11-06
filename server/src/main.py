@@ -1,5 +1,6 @@
 from config import DockerConfig
 from gpt_api import GPT_API
+from i_ching_models import Diviner
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -31,6 +32,7 @@ async def lifespan(app: FastAPI):
 
 cfg = DockerConfig()
 gptapi = GPT_API(cfg('OPENAI_API_KEY'))
+diviner = Diviner(gptapi)
 app = FastAPI(lifespan=lifespan)
 
 # 添加CORS中间件
@@ -59,13 +61,12 @@ async def divination_start(data : APIDivinationStart):
         raise CommonERR("invalid_key")
 
     # 生成卦象 生成说明
-    ai_reply = "这是一段测试文本，代表占卜师的卦象解释。"
-    back_ground = "这是一段背景信息，用于压缩对话内容"
-    await app.state.redis.set(data.user_id, back_ground, ex=600)
+    ai_message, background_info = diviner.start(data.question, data.hexagram)
+    await app.state.redis.set(data.user_id, background_info, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", "0", ex=600)
+    await app.state.redis.set(data.user_id + "-HEXAGRAM-", data.hexagram, ex=600)
     
-    time.sleep(2)
-    return {"master": ai_reply}
+    return {"master": ai_message}
 
 
 @app.post(cfg('APIROUTE_DIVINATION_CONSULT'))
@@ -79,18 +80,23 @@ async def divination_consult(data : APIDivinationConsult):
     counter = int(counter) if counter else 999
     if counter >= cfg('REDIS_COUNTER'):
         await app.state.redis.delete(data.user_id)
+        await app.state.redis.delete(data.user_id + "-COUNTER-")
+        await app.state.redis.delete(data.user_id + "-HEXAGRAM-")
         raise CommonERR("rached_consult_limit")
-        
-    # 生成卦象 生成说明
-    ai_reply = "这是一段测试文本，代表占卜师对启示的解答。" + data.question
+
     back_ground = await app.state.redis.get(data.user_id)
+    hexagram = await app.state.redis.get(data.user_id + "-HEXAGRAM-")
     back_ground += data.question
+    # 生成卦象 生成说明
+    ai_message, background_info = diviner.consult(data.question, 
+                                                  hexagram, 
+                                                  back_ground)
 
-    await app.state.redis.set(data.user_id, back_ground, ex=600)
+    await app.state.redis.set(data.user_id, background_info, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", counter+1, ex=600)
+    await app.state.redis.set(data.user_id + "-HEXAGRAM-", hexagram, ex=600)
 
-    time.sleep(2)
-    return {"master": ai_reply}
+    return {"master": ai_message}
 
 
 class CommonERR(Exception):

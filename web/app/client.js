@@ -3,7 +3,7 @@ const appConfig = {
     apiUrlDivinationStart : 'http://127.0.0.1:5000/divination/start',
     apiUrlDivinationConsult : 'http://127.0.0.1:5000/divination/consult',
     userId : crypto.randomUUID(),
-    key : "808c7166-7c59-11ee-b962-0242ac120002",
+    key : "8ff70a3c-6a74-4928-9d39-4c1648ac1897",
     confusionLimit : 0,
 }
 
