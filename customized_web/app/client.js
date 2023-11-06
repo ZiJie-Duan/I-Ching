@@ -2,7 +2,7 @@
 const appConfig = {
     apiUrlDivinationStart : 'http://45.32.8.253:5000/divination/start',
     apiUrlDivinationConsult : 'http://45.32.8.253:5000/divination/consult',
-    userId : generate16DigitRandomNumber(),
+    userId : generate36DigitRandomNumber(),
     key : "8ff70a3c-6a74-4928-9d39-4c1648ac1897",
     confusionLimit : 0,
 }
@@ -262,7 +262,7 @@ function createErrPage(data){
 
 function generate16DigitRandomNumber() {
     let randomNumber = '';
-    for(let i = 0; i < 16; i++) {
+    for(let i = 0; i < 36; i++) {
       let digit = Math.floor(Math.random() * 10); // generates a number between 0 and 9
       randomNumber += digit.toString();
     }
