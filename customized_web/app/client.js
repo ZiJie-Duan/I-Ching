@@ -260,7 +260,7 @@ function createErrPage(data){
 }
 
 
-function generate16DigitRandomNumber() {
+function generate36DigitRandomNumber() {
     let randomNumber = '';
     for(let i = 0; i < 36; i++) {
       let digit = Math.floor(Math.random() * 10); // generates a number between 0 and 9
