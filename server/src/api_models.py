@@ -10,4 +10,4 @@ class APIDivinationStart(BaseModel):
 class APIDivinationConsult(BaseModel):
     key : constr(max_length=36, min_length=36)
     user_id : constr(max_length=36, min_length=36)
-    question : constr(min_length=2, max_length=50)
+    question : constr(min_length=2, max_length=200)

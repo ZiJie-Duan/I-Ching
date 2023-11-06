@@ -1,0 +1,46 @@
+version: '4.21.1'
+
+services:
+
+  webc:
+    image: zke_web:latest
+    container_name: zke_web
+    restart: always
+    ports:
+      - 80:80
+    build:
+      context: ./customized_web
+  
+  web:
+    image: web:latest
+    container_name: web
+    restart: always
+    ports:
+      - 90:80
+    build:
+      context: ./web
+
+
+  iching_server:
+    container_name: iching_server
+    restart: always
+    networks:
+      - app-network
+    build:
+      context: ./server
+    image: iching_server:latest
+    env_file:
+      - ./iching.env
+    ports:
+      - 5000:5000
+  
+  redis:
+    container_name: redis
+    image: redis:latest
+    restart: always
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,9 +1,9 @@
 
 const appConfig = {
-    apiUrlDivinationStart : 'http://127.0.0.1:8000/divination/start',
-    apiUrlDivinationConsult : 'http://127.0.0.1:8000/divination/consult',
+    apiUrlDivinationStart : 'http://127.0.0.1:5000/divination/start',
+    apiUrlDivinationConsult : 'http://127.0.0.1:5000/divination/consult',
     userId : crypto.randomUUID(),
-    key : "860d159d-3728-47d6-b8d5-473a698205e6",
+    key : "808c7166-7c59-11ee-b962-0242ac120002",
     confusionLimit : 0,
 }
 
@@ -75,7 +75,13 @@ function divination_start(hexagram, question){
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            let data = response.json();
+            return data
+            .then(data => {
+                removeLoadingDiv();
+                createErrPage(data.detail)
+                throw new Error("ERR_HAPPENED_SUCCESS");
+            })
         }
         return response.json();
     })
@@ -84,7 +90,12 @@ function divination_start(hexagram, question){
         createTalkBox(data.master, rootPage, get_divination_confusion);
     })
     .catch(error => {
-        alert(error);
+        if (error.message == "ERR_HAPPENED_SUCCESS"){
+            return;
+        }
+        alert("占卜错误 请检查您的网络连接 页面即将刷新");
+        //refresh page
+        location.reload();
     });
 }
 
@@ -111,7 +122,13 @@ function divination_confusion(question){
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            let data = response.json();
+            return data
+            .then(data => {
+                removeLoadingDiv();
+                createErrPage(data.detail)
+                throw new Error("ERR_HAPPENED_SUCCESS");
+            })
         }
         return response.json();
     })
@@ -120,7 +137,12 @@ function divination_confusion(question){
         createTalkBox(data.master, rootPage, get_divination_confusion)
     })
     .catch(error => {
-        alert(error);
+        if (error.message == "ERR_HAPPENED_SUCCESS"){
+            return;
+        }
+        alert("占卜错误 请检查您的网络连接 页面即将刷新");
+        //refresh page
+        location.reload();
     });
 }
 
@@ -196,3 +218,43 @@ function createTalkBox(ai_message, parentElement, callback){
     parentElement.appendChild(talk_box);
 }
 
+
+function createErrPage(data){
+    let talk_box = document.createElement("div");
+    talk_box.setAttribute("id", elementID.talkBox);
+    talk_box.setAttribute("class", "flex flex-col gap-8 justify-center items-center bg-neutral-50 py-12 px-12 rounded-lg shadow-xl max-w-screen-md");
+
+    let topic = document.createElement("p");
+    topic.textContent = "占卜错误"
+    topic.setAttribute("class", "text-2xl text-center text-neutral-900");
+
+    let message = document.createElement("p");
+    message.setAttribute("class", "text-xl text-center text-neutral-900");
+
+    console.log(data);
+    if (data[0].includes("String should have at least 2 characters")){
+        message.textContent = "你的请示或卜问没有意义 请写完整";
+    } else if (data[0].includes("String should have at most 50 characters")){
+        message.textContent = "卜问 简要描述你的困惑 50字以内就足够了";
+    } else if (data[0].includes("String should have at most 200 characters")){
+        message.textContent = "请示 简要描述你的困惑 200字以内就足够了";
+    } else {
+        message.textContent = data[0];
+    }
+
+    let button = document.createElement("button");
+    button.setAttribute("id", "refresh_button");
+    button.setAttribute("class", "text-lg text-center text-neutral-900 bg-neutral-100 hover:bg-neutral-200 px-8 py-2 rounded-lg shadow-md");
+    button.textContent = "重新开始占卜";
+
+    button.addEventListener("click", function(){
+        location.reload();
+    });
+    
+    talk_box.appendChild(topic);
+    talk_box.appendChild(message);
+    talk_box.appendChild(button);
+    let rootPage = document.getElementById(elementID.rootPage);
+    rootPage.appendChild(talk_box);
+
+}

@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
 
 
 cfg = DockerConfig()
-gptapi = GPT_API(cfg('OPENAI_API_KEY_PETER'))
+gptapi = GPT_API(cfg('OPENAI_API_KEY'))
 app = FastAPI(lifespan=lifespan)
 
 # 添加CORS中间件
