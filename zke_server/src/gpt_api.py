@@ -1,4 +1,5 @@
 import openai
+from pprint import pprint
 
 class GPT_API:
     """
@@ -73,18 +74,32 @@ class GPT_API:
             max_tokens = 100,
             model = None,
             full = False,
-            timeout = 30) -> str:
+            timeout = 10) -> str:
+        
+        print("\n\n-----------------------")
+        pprint(messages)
         
         if not model:
             model = self.model
-    
-        response = await openai.ChatCompletion.acreate(
-            model = model,
-            messages = messages,
-            temperature = temperature,
-            max_tokens = max_tokens,
-            request_timeout = timeout
-        )
+
+        finished = False
+        for _ in range(3):
+            try:
+                response = await openai.ChatCompletion.acreate(
+                    model = model,
+                    messages = messages,
+                    temperature = temperature,
+                    max_tokens = max_tokens,
+                    request_timeout = timeout
+                )
+                finished = True
+                break
+            except:
+                print("retrying...")
+                continue
+            
+        if not finished:
+            raise Exception("GPT API query failed")
 
         if full:
             return response

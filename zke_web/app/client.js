@@ -190,7 +190,7 @@ function createTalkBox(ai_message, parentElement, callback){
     talk_box.setAttribute("class", "flex flex-col gap-8 justify-center items-center bg-neutral-50 py-12 px-12 rounded-lg shadow-xl max-w-screen-md");
 
     let topic = document.createElement("p");
-    topic.textContent = "段乾坤所述"
+    topic.textContent = "赵乾坤所述"
     topic.setAttribute("class", "text-2xl text-center text-neutral-900");
 
     let ai_text = document.createElement("p");

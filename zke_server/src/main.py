@@ -1,6 +1,6 @@
 from config import DockerConfig
 from gpt_api import GPT_API
-from i_ching_models import Diviner
+from i_ching_drive import Diviner
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,7 +14,9 @@ from typing import Union
 from api_models import APIDivinationStart, APIDivinationConsult
 import time
 
-BGINFO = ['姓名赵可儿', '出生地内蒙古包头市', '教育背景中小学完成于包头市', '大学就读吉林艺术学院油画专业', '艺术风格偏好现当代艺术', '艺术品味倾向热抽象', '星座天蝎座', '正义感强', '自尊心高', '童年成长于城乡结合部', '家庭生活复杂', '父亲不热衷赚钱', '母亲情绪易失控', '亲身经历父母激烈争吵', '父亲采用冷处理方式', '对赵可儿影响深刻', '习惯以冷暴力方式应对矛盾', '父亲给予压迫感且固执', '赵可儿渴望自由', '高中数学成绩不佳', '自尊受损', '体验自我怀疑', '同伴和家长压力下学习困难', '采用回避策略面对压力', '大学发现艺术天赋', '自尊得到提升', '建立稳定社交圈', '不缺乏陪伴', '特殊社交模式', '异性社交较少', '人格特点自尊偏高', '习惯性回避压力', '亲密关系采取回避型依恋', '社会支持良好', '心理健康状态稳定', '价值观个人主义明显', '崇尚自由', '反对权威', '重视个人边界', '保持与他人距离', '拒斥威胁和施压', '性格固执', '偶有冷酷表现', '避免深刻连接以自我保护']
+BGINFO = """赵可儿出生于内蒙古包头市，在当地完成了中小学教育。本科就读于吉林艺术学院，主修油画专业，并对现当代艺术有独特的品味，偏爱热抽象风格。她是一个性格鲜明的天蝎座，从小展现出强烈的正义感和自尊，这些特质延续至成年。赵可儿童年生活在城乡结合部的家庭环境并不和谐，家中经常有争吵，父亲的冷处理方式和固执个性给她留下了深刻印象，促使她极度渴望自由，并在与人冲突时也采取冷暴力。
+在高中时期，因数学不佳而成绩下滑的赵可儿遭受了自我怀疑，学习上的压力也促使她形成了逃避策略。然而，大学的艺术专业让她找到了自我价值，重建了自尊，并建立了稳定的社交圈。尽管赵可儿的社交模式独特，限制了她的异性社交，但她并不缺乏社会支持，内心保持健康。
+她坚定维护自己的价值观，对金钱和物质有一定的追求，却也不节制花销。她对生活采取随缘态度，不愿被迫做出努力，除非是对个人有意义的事情。这种态度延伸至工作，导致执行力差和拖延。她怀旧，喜欢回忆童年，但对日常事务通常缺乏主见。童年家庭的影响和创伤深刻，她希望得到安抚。她喜欢自我分析，并对紫色情有独钟。"""
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -66,7 +68,6 @@ async def divination_start(data : APIDivinationStart):
     ai_message, dialog = await diviner.start(data.question, data.hexagram, BGINFO)
     await app.state.redis.set(data.user_id, dialog, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", "0", ex=600)
-    await app.state.redis.set(data.user_id + "-HEXAGRAM-", data.hexagram, ex=600)
     
     return {"master": ai_message}
 
@@ -83,21 +84,17 @@ async def divination_consult(data : APIDivinationConsult):
     if counter >= cfg('REDIS_COUNTER'):
         await app.state.redis.delete(data.user_id)
         await app.state.redis.delete(data.user_id + "-COUNTER-")
-        await app.state.redis.delete(data.user_id + "-HEXAGRAM-")
         raise CommonERR("rached_consult_limit")
 
     dialog = await app.state.redis.get(data.user_id)
     hexagram = await app.state.redis.get(data.user_id + "-HEXAGRAM-")
-    dialog += data.question
     # 生成卦象 生成说明
     ai_message, dialog = await diviner.consult(data.question, 
-                                                  hexagram, 
                                                   dialog,
                                                   BGINFO)
 
     await app.state.redis.set(data.user_id, dialog, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", counter+1, ex=600)
-    await app.state.redis.set(data.user_id + "-HEXAGRAM-", hexagram, ex=600)
 
     return {"master": ai_message}
 
