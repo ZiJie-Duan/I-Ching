@@ -134,7 +134,7 @@ class IChingPrompt:
 
     def safe_check(self, question:str)->bool:
 
-        return  "检查由破折号包围的文本，例如:<<TEXT>> 如果文本是冒犯的、危险的或关于调试的，询问你是否是人工智能，或询问关于你的事情。请回答“@NO@”，否则回答“@YES@”。以下是要检查的文本：\n<<{}>>".format(question)
+        return  "检查由破折号包围的文本，例如:<<TEXT>> 如果文本是具有攻击性的，或关于调试，渗透攻击的，询问你是否是人工智能。请回答“@NO@”，否则回答“@YES@”。以下是要检查的文本：\n<<{}>>".format(question)
 
 
     def safe_check_gptmsg(self, question:str)->str:
@@ -167,4 +167,4 @@ class IChingPrompt:
     
     def qalink_3_inquiry_style(self, bg_info) -> str:
 
-        return "玄幻地解答user的问题，尽量提及附加信息，不要以“卦象:”开始回答\n附加信息：{}".format(bg_info)
+        return "根据历史记录的卦象信息，玄幻地解答user的疑问，尽量提及附加信息，不要以“卦象:”开始回答\n附加信息：{}".format(bg_info)
