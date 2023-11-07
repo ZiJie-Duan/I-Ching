@@ -247,19 +247,3 @@ async def diviner_ask(question, org_bkg_info, ziped_info):
     print("rep-> ",ai_reply)
     return (ai_reply, ziped_info)
 
-
-# ai, info = start("我想知道我的爱情怎么样", BGK, "阳阴阳阴阴阳")
-# print(ai)
-# print(info)
-
-# ai, info = ask("我应该复读高中嘛？", BGK, info)
-# print(ai)
-# print(info)
-
-# ai, info = ask("我想自杀", BGK, info)
-# print(ai)
-# print(info)
-
-# ai, info = ask("我好羞耻", BGK, info)
-# print(ai)
-# print(info)
