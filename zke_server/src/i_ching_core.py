@@ -152,11 +152,16 @@ cfg_t = DockerConfig()
 gpt4 = ChatOpenAI(
     openai_api_key=cfg_t('OPENAI_API_KEY'), 
     model_name = "gpt-4-1106-preview",
-    temperature=0.5)
+    temperature=0.5,
+    request_timeout=50,
+    max_retries=3)
+
 gpt3 = ChatOpenAI(
     openai_api_key=cfg_t('OPENAI_API_KEY'), 
     model_name = "gpt-3.5-turbo",
-    temperature=0)
+    temperature=0,
+    request_timeout=15,
+    max_retries=3)
 
 def debug_printzpi(info):
     print("zpi->",info)
