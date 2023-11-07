@@ -7,7 +7,7 @@ services:
     container_name: zke_web
     restart: always
     ports:
-      - 8080:80
+      - 80:80
     build:
       context: ./zke_web
   
@@ -16,7 +16,7 @@ services:
     container_name: web
     restart: always
     ports:
-      - 80:80
+      - 1234:80
     build:
       context: ./web
 

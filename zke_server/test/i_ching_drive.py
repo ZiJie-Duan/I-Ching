@@ -74,7 +74,7 @@ class Diviner:
         """consult the diviner"""
         # 请示占卜的函数，回复问题
         # 相同的前置 提示词
-        prompt_f = self.prompts.qalink_1_identity_scenario()
+        prompt_f = self.prompts.qalink_1_inquiry_scenario()
 
         if bg_info:
             related_info = await self.__get_related_info(question, bg_info)

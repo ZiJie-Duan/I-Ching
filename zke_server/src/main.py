@@ -1,6 +1,6 @@
 from config import DockerConfig
 from gpt_api import GPT_API
-from i_ching_drive import Diviner
+from i_ching_core import diviner_start, diviner_ask
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -17,6 +17,16 @@ import time
 BGINFO = """赵可儿出生于内蒙古包头市，在当地完成了中小学教育。本科就读于吉林艺术学院，主修油画专业，并对现当代艺术有独特的品味，偏爱热抽象风格。她是一个性格鲜明的天蝎座，从小展现出强烈的正义感和自尊，这些特质延续至成年。赵可儿童年生活在城乡结合部的家庭环境并不和谐，家中经常有争吵，父亲的冷处理方式和固执个性给她留下了深刻印象，促使她极度渴望自由，并在与人冲突时也采取冷暴力。
 在高中时期，因数学不佳而成绩下滑的赵可儿遭受了自我怀疑，学习上的压力也促使她形成了逃避策略。然而，大学的艺术专业让她找到了自我价值，重建了自尊，并建立了稳定的社交圈。尽管赵可儿的社交模式独特，限制了她的异性社交，但她并不缺乏社会支持，内心保持健康。
 她坚定维护自己的价值观，对金钱和物质有一定的追求，却也不节制花销。她对生活采取随缘态度，不愿被迫做出努力，除非是对个人有意义的事情。这种态度延伸至工作，导致执行力差和拖延。她怀旧，喜欢回忆童年，但对日常事务通常缺乏主见。童年家庭的影响和创伤深刻，她希望得到安抚。她喜欢自我分析，并对紫色情有独钟。"""
+
+BGINFO2 = """
+汪文博，一位2002年10月22日出生的男性，身为一名忠诚的属马人士，立足于稳定的中产阶级。他是一个忙碌的父亲，成长在严厉的母亲和童年时期的严格管教下，形成了深刻的应激模式和深沉的恐惧。面对不明确的不确定性和未知的环境，他展现出强烈的好奇心和不屈的好胜心。
+
+尽管有时会受到不稳定的高自尊和轻微的自卑心理的影响，汪文博拥有出色的学习能力、出众的社交技巧和优秀的领导力，这些品质帮助他获得瞬间的优势。他的有力逻辑和独特思维方式，加上坚韧不拔的性格和坚持不懈的决心，使他在学术和人际关系中都表现出色。
+
+他是一个真诚的朋友和爱情中的忠诚伴侣，经历了优异的小学教育和良好的初中生活。他的学习成绩一直很优秀，尤其是在数学和深入研究的物理学领域。这份才华和努力带他进入了一流的高中，尽管面临了高考的压力，他依然被知名的北京大学和著名的香港中文大学录取。
+
+在个人生活方面，他拥有一个美丽的女朋友，但他们的关系并不稳定，曾经历过严重的低谷。尽管如此，汪文博仍然能够深沉地表达内心的情感，他的“爱你”温暖而诚挚，而“想你”充满怀念。他非常关心家人和他熟悉的其他人，展现出他的绝对忠诚和深厚的情感。
+"""
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -36,7 +46,6 @@ async def lifespan(app: FastAPI):
 
 cfg = DockerConfig()
 gptapi = GPT_API(cfg('OPENAI_API_KEY'))
-diviner = Diviner(gptapi)
 app = FastAPI(lifespan=lifespan)
 
 # 添加CORS中间件
@@ -65,7 +74,7 @@ async def divination_start(data : APIDivinationStart):
         raise CommonERR("invalid_key")
 
     # 生成卦象 生成说明
-    ai_message, dialog = await diviner.start(data.question, data.hexagram, BGINFO)
+    ai_message, dialog = await diviner_start(data.question, BGINFO, data.hexagram)
     await app.state.redis.set(data.user_id, dialog, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", "0", ex=600)
     
@@ -87,11 +96,10 @@ async def divination_consult(data : APIDivinationConsult):
         raise CommonERR("rached_consult_limit")
 
     dialog = await app.state.redis.get(data.user_id)
-    hexagram = await app.state.redis.get(data.user_id + "-HEXAGRAM-")
     # 生成卦象 生成说明
-    ai_message, dialog = await diviner.consult(data.question, 
-                                                  dialog,
-                                                  BGINFO)
+    ai_message, dialog = await diviner_ask(data.question, 
+                                                BGINFO,
+                                                dialog)
 
     await app.state.redis.set(data.user_id, dialog, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", counter+1, ex=600)

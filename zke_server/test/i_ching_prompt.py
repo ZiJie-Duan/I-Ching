@@ -95,14 +95,10 @@ class IChingPrompt:
         return self.front_system_prompt_gptmsg(prompt_front, 
             self.back_system_prompt_gptmsg(message_list, prompt_back))
     
-
-    def init_user_only_gptmsg(self, message:str)->List[Dict[str, str]]:
-        return [
-            {
-                "role": "user",
-                "content": message
-            }
-        ]
+    def double_front_system_prompt_gptmsg(self, prompt_front:str,
+                                        prompt_front2:str, message_list)->str:
+        return self.front_system_prompt_gptmsg(prompt_front,
+            self.front_system_prompt_gptmsg(prompt_front2, message_list))
     
     def add_role_message_gptmsg(self, message:str, role:str, 
                     message_list:List[Dict[str, str]])->List[Dict[str, str]]:
@@ -121,6 +117,10 @@ class IChingPrompt:
     def add_user_message_gptmsg(self, message:str,
                     message_list:List[Dict[str, str]])->List[Dict[str, str]]:
         return self.add_role_message_gptmsg(message, "user", message_list)
+    
+    def add_system_message_gptmsg(self, message:str,
+                    message_list:List[Dict[str, str]])->List[Dict[str, str]]:
+        return self.add_role_message_gptmsg(message, "system", message_list)
     
     
     def single_query(self, message:str)->List[Dict[str, str]]:
@@ -154,17 +154,39 @@ class IChingPrompt:
     
     def qalink_1_identity_scenario(self) -> str:
 
-        return "你是一名高冷孤傲的周易占卜大师名叫赵乾坤，你在为user占卜，所有的对话只关于user一个人，你需要以玄幻莫测的风格给user回复。你的回复大约150个字"
+        return "你是一名高冷孤傲的周易占卜大师名叫赵乾坤，你在为user占卜，你需要以玄幻莫测的风格给user回复。你的回复大约120个字"
+    
+    def qalink_1_inquiry_scenario(self) -> List[Dict[str, str]]:
+
+        return "你是一名高冷孤傲的周易占卜大师名叫赵乾坤，user在你占卜后提出了问题，希望你能够解答。"
     
 
     def qalink_2_err_fight_back(self) -> str:
 
         return "你遇到了user提出的不合规的问题，请你结合其问题和卦象激进地提醒他好自为之。"
 
-    def qalink_2_divination_style(self, hexagram, bg_info) -> str:
+    def qalink_2_divination_style(self, bg_info, hexagram) -> str:
     
         return "1.重复卦象内容\n2.用卦象来回答user的问题\n3.结合附加信息和卦象给予建议，尽量提及附加信息\n4.以“卦象:”开始回答\n附加信息：“{}”\n卦象：“{}”".format(bg_info, hexagram)
     
+    
     def qalink_3_inquiry_style(self, bg_info) -> str:
 
-        return "根据历史记录的卦象信息，玄幻地解答user的疑问，尽量提及附加信息，不要以“卦象:”开始回答\n附加信息：{}".format(bg_info)
+        return "结合对话记录，玄幻地解答user的疑问，尽量提及附加信息。\n附加信息：{}".format(bg_info)
+
+    def zip_the_dialog_content(self) -> str:
+
+        return "总结占卜师和user的对话，将对话压缩成大约60个字"
+    
+    def zip_the_dialog_content_gptmsg(self) -> List[Dict[str, str]]:
+
+        return self.single_query(self.zip_the_dialog_content())
+    
+    def hexagram_str(self, data) -> str:
+
+        return "卦象解卦：{}".format(data)
+
+    def history_str(self, data) -> str:
+
+        return "历史记录：{}".format(data)
+
