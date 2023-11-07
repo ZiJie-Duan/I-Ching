@@ -4,6 +4,7 @@ from langchain.prompts import PromptTemplate
 from langchain.schema.output_parser import StrOutputParser
 from langchain.schema.runnable import RunnableLambda
 import logging
+from config import DockerConfig
 
 # # 设置日志级别为 DEBUG 来获取详细输出
 # logging.basicConfig(level=logging.DEBUG)
@@ -147,12 +148,13 @@ user：{user_message}
 def getHexagramMeaning(info):
     return hexagram_meaning[info["hexagram"]]
 
+cfg_t = DockerConfig()
 gpt4 = ChatOpenAI(
-    openai_api_key="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", 
+    openai_api_key=cfg_t('OPENAI_API_KEY'), 
     model_name = "gpt-4-1106-preview",
     temperature=0.5)
 gpt3 = ChatOpenAI(
-    openai_api_key="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", 
+    openai_api_key=cfg_t('OPENAI_API_KEY'), 
     model_name = "gpt-3.5-turbo",
     temperature=0)
 
