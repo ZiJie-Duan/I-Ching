@@ -1,6 +1,5 @@
 from config import DockerConfig
-from gpt_api import GPT_API
-from i_ching_models import Diviner
+from i_ching_core import diviner_start, diviner_ask
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,10 +8,9 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 import aioredis
-from typing import Union
-
 from api_models import APIDivinationStart, APIDivinationConsult
-import time
+
+BGINFO = "None"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,8 +29,6 @@ async def lifespan(app: FastAPI):
 
 
 cfg = DockerConfig()
-gptapi = GPT_API(cfg('OPENAI_API_KEY'))
-diviner = Diviner(gptapi)
 app = FastAPI(lifespan=lifespan)
 
 # 添加CORS中间件
@@ -61,10 +57,9 @@ async def divination_start(data : APIDivinationStart):
         raise CommonERR("invalid_key")
 
     # 生成卦象 生成说明
-    ai_message, dialog = await diviner.start(data.question, data.hexagram)
+    ai_message, dialog = await diviner_start(data.question, BGINFO, data.hexagram)
     await app.state.redis.set(data.user_id, dialog, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", "0", ex=600)
-    await app.state.redis.set(data.user_id + "-HEXAGRAM-", data.hexagram, ex=600)
     
     return {"master": ai_message}
 
@@ -81,20 +76,16 @@ async def divination_consult(data : APIDivinationConsult):
     if counter >= cfg('REDIS_COUNTER'):
         await app.state.redis.delete(data.user_id)
         await app.state.redis.delete(data.user_id + "-COUNTER-")
-        await app.state.redis.delete(data.user_id + "-HEXAGRAM-")
         raise CommonERR("rached_consult_limit")
 
     dialog = await app.state.redis.get(data.user_id)
-    hexagram = await app.state.redis.get(data.user_id + "-HEXAGRAM-")
-    dialog += data.question
     # 生成卦象 生成说明
-    ai_message, dialog = await diviner.consult(data.question, 
-                                                  hexagram, 
-                                                  dialog)
+    ai_message, dialog = await diviner_ask(data.question, 
+                                                BGINFO,
+                                                dialog)
 
     await app.state.redis.set(data.user_id, dialog, ex=600)
     await app.state.redis.set(data.user_id + "-COUNTER-", counter+1, ex=600)
-    await app.state.redis.set(data.user_id + "-HEXAGRAM-", hexagram, ex=600)
 
     return {"master": ai_message}
 
