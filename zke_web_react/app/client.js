@@ -1,9 +1,9 @@
 
 const appConfig = {
-    apiUrlDivinationStart : 'http://45.32.8.253:4000/divination/start',
-    apiUrlDivinationConsult : 'http://45.32.8.253:4000/divination/consult',
+    apiUrlDivinationStart : 'http://45.32.8.253:5000/divination/start',
+    apiUrlDivinationConsult : 'http://45.32.8.253:5000/divination/consult',
     userId : generate36DigitRandomNumber(),
-    key : "9757e4cb-4019-420a-be24-4ce5a4cf03bf",
+    key : "4c3b427b-4dfa-4da8-bc9f-746a6bc32999",
     confusionLimit : 0,
 }
 
@@ -190,7 +190,7 @@ function createTalkBox(ai_message, parentElement, callback){
     talk_box.setAttribute("class", "flex flex-col gap-8 justify-center items-center bg-neutral-50 py-12 px-12 rounded-lg shadow-xl max-w-screen-md");
 
     let topic = document.createElement("p");
-    topic.textContent = "赵乾坤所述"
+    topic.textContent = "段乾坤所述"
     topic.setAttribute("class", "text-2xl text-center text-neutral-900");
 
     let ai_text = document.createElement("p");
