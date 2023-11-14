@@ -1,80 +1,42 @@
-
 <!DOCTYPE html>
-<html lang="zh-CN">
-
-<head>
-    <meta charset="UTF-8">
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>段乾坤</title>
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>段乾坤</title>
 
-    <style>
-        @keyframes spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+    <!-- Don't use this in production: -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
-</head>
+    <style>
+      @keyframes spin {
+          from {
+              transform: rotate(0deg);
+          }
+          to {
+              transform: rotate(360deg);
+          }
+      }
+  </style>
 
-<body>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel" src="app.js"></script>
+    <!--
+      Note: this page is a great way to try React but it's not suitable for production.
+      It slowly compiles JSX with Babel in the browser and uses a large development build of React.
 
-    <div id="root_page" class="flex flex-col justify-center items-center min-h-screen">
-        <div id="talk_box" class="flex flex-col gap-8 justify-center items-center bg-neutral-50 py-12 px-12 rounded-lg shadow-xl">
-            <div>
-                <p class="text-3xl font-bold text-center text-gray-900 bg-gray-100 py-6 px-10 rounded-lg shadow-md">
-                    段乾坤 周易八卦 占卜屋
-                </p>
-            </div>
+      Read this page for starting a new React project with JSX:
+      https://react.dev/learn/start-a-new-react-project
 
-            <div class="flex flex-col items-center">
-                <label for="confusion_text" class="text-xl font-bold">卜问</label>
-                <input id="confusion_text" type="text" name="confusion_text" class="border border-gray-400 rounded">
-            </div>
-
-            <div class="flex flex-row gap-10">
-                <p class="text-base hover:font-bold hover:text-red-400">阳爻请勾选</p>
-                <p class="text-base hover:font-bold hover:text-red-400">阴爻请留空</p>
-            </div>
-
-            <div class="flex flex-row gap-5">
-                <div class="flex flex-col gap-2">
-                    <label for="hexagram1" class="hover:text-red-600 hover:font-bold">初爻</label>
-                    <input type="checkbox" id="hexagram1" name="hexagram1">
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="hexagram2" class="hover:text-red-600 hover:font-bold">二爻</label>
-                    <input type="checkbox" id="hexagram2" name="hexagram2">
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="hexagram3" class="hover:text-red-600 hover:font-bold">三爻</label>
-                    <input type="checkbox" id="hexagram3" name="hexagram3">
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="hexagram4" class="hover:text-red-600 hover:font-bold">四爻</label>
-                    <input type="checkbox" id="hexagram4" name="hexagram4">
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="hexagram5" class="hover:text-red-600 hover:font-bold">五爻</label>
-                    <input type="checkbox" id="hexagram5" name="hexagram5">
-                </div>
-                <div class="flex flex-col gap-2">
-                    <label for="hexagram6" class="hover:text-red-600 hover:font-bold">上爻</label>
-                    <input type="checkbox" id="hexagram6" name="hexagram6">
-                </div>
-            </div>
-
-            <div>
-                <button id="submitButton_for_hexagram" class = "bg-gray-100 font-medium py-3 px-8 rounded-lg shadow-md hover:bg-gray-200">求解卦象</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="client.js"></script>
-
-</body>
+      Read this page for adding React with JSX to an existing project:
+      https://react.dev/learn/add-react-to-an-existing-project
+    -->
+  </body>
 </html>
