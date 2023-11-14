@@ -11,15 +11,6 @@ services:
     build:
       context: ./zke_web
   
-  web:
-    image: web:latest
-    container_name: web
-    restart: always
-    ports:
-      - 8080:80
-    build:
-      context: ./web
-
   zke_server:
     container_name: zke_server
     restart: always
@@ -32,19 +23,6 @@ services:
       - ./zkeiching.env
     ports:
       - 4000:5000
-
-  iching_server:
-    container_name: iching_server
-    restart: always
-    networks:
-      - app-network
-    build:
-      context: ./server
-    image: iching_server:latest
-    env_file:
-      - ./iching.env
-    ports:
-      - 5000:5000
   
   redis:
     container_name: redis
