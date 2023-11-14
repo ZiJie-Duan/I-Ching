@@ -234,7 +234,7 @@ function generate36DigitRandomNumber() {
 
 function divination_start(hexagram, question, sucCallBack, errCallBack){
     // 定义请求的URL
-    const url = 'http://45.32.8.253:5000/divination/start';
+    const url = 'http://iching.ath.cx:5000/divination/start';
 
     // 创建将要发送的数据
     const data = {
@@ -279,7 +279,7 @@ function divination_start(hexagram, question, sucCallBack, errCallBack){
 
 function divination_confusion(question, sucCallBack, errCallBack){
     // 定义请求的URL
-    const url = 'http://45.32.8.253:5000/divination/consult';
+    const url = 'http://iching.ath.cx:5000/divination/consult';
 
     // 创建将要发送的数据
     const data = {
