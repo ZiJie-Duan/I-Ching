@@ -10,7 +10,15 @@ function generateYinYang() {
     return result;
 }
 
-function ErrorPage({message}){
+function ErrorPage({messages}){
+    let message = messages[0];
+    if (message.includes("String should have at least 2 characters")){
+        message = "你的请示或卜问没有意义 请写完整";
+    } else if (message.includes("String should have at most 50 characters")){
+        message = "卜问 简要描述你的困惑 50字以内就足够了";
+    } else if (message.includes("String should have at most 200 characters")){
+        message = "请示 简要描述你的困惑 200字以内就足够了";
+    }
     return(
         <div className="flex flex-col gap-4 justify-center items-center bg-neutral-50 py-12 px-12 rounded-lg shadow-xl">
             <p className="text-2xl text-center text-neutral-900">
@@ -398,7 +406,7 @@ function IChing() {
             {(pageid==8) && <QandA msg={reply} aftquestion={aftQuestion} questionNum={questionNum}/>}
             {(pageid==9) && <Tutorial02 jumpToRes={jumpToRes} jumpToEndPage={jumpToEndPage}/>}
             {(pageid==10) && <SayGoodbye jumpToStart={jumpToStart}/>}
-            {(pageid==11) && <ErrorPage message={errorMsg}/>}
+            {(pageid==11) && <ErrorPage messages={errorMsg}/>}
         </div>
         )
     }
