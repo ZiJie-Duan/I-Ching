@@ -2,36 +2,14 @@ version: '4.21.1'
 
 services:
 
-  zke_web:
-    image: zke_web:latest
-    container_name: zke_web
-    restart: always
-    ports:
-      - 80:80
-    build:
-      context: ./zke_web
-  
   web:
     image: web:latest
     container_name: web
     restart: always
     ports:
-      - 8080:80
+      - 80:80
     build:
       context: ./web
-
-  zke_server:
-    container_name: zke_server
-    restart: always
-    networks:
-      - app-network
-    build:
-      context: ./zke_server
-    image: zke_server:latest
-    env_file:
-      - ./zkeiching.env
-    ports:
-      - 4000:5000
 
   iching_server:
     container_name: iching_server
