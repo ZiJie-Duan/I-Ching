@@ -1,7 +1,7 @@
 
 const appConfig = {
-    apiUrlDivinationStart : 'http://45.32.8.253:4000/divination/start',
-    apiUrlDivinationConsult : 'http://45.32.8.253:4000/divination/consult',
+    apiUrlDivinationStart : 'http://zke.life:4000/divination/start',
+    apiUrlDivinationConsult : 'http://zke.life:4000/divination/consult',
     userId : generate36DigitRandomNumber(),
     key : "9757e4cb-4019-420a-be24-4ce5a4cf03bf",
     confusionLimit : 0,
