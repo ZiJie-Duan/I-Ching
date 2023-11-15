@@ -88,6 +88,7 @@ safeCheck_pmpt = PromptTemplate.from_template(
 sumBackGroundInfo_pmpt = PromptTemplate.from_template(
 """
 提取背景信息，将背景信息中与问题相关的内容总结为一句话，20个字。
+如果背景信息不存在，请回复“None”
 问题：{question}
 背景信息：{org_bkg_info}
 """)
@@ -123,6 +124,7 @@ basic_scenario_pmpt + \
 2.用卦象来回答user的问题
 3.结合附加信息和卦象给予建议，提及与问题相关的附加信息
 4.以“卦象:”开始回答
+注意：如果附加信息不存在 忽略即可
 附加信息："{background_info}"
 卦象："{hexagram_meaning}"
 问题："{question}"
@@ -133,6 +135,7 @@ basic_scenario_pmpt2 + \
 """
 参考历史对话信息和附加信息，玄幻的回复user的问题。
 仅参考与问题相关的历史对话信息和附加信息并换一种表达方式回复。
+注意：如果附加信息不存在 忽略即可
 历史对话信息："{dialogue_history}"
 附加信息："{background_info}"
 user的问题："{question}"
@@ -142,7 +145,7 @@ zip_info_pmpt = PromptTemplate.from_template(
 """
 请你将user与占卜师的信息以及附加信息总结为一段话，一整段描述，不超过30个字。
 重点记录user与占卜师的信息
-如果信息缺失，不存在，无法总结请回复“None”
+如果有信息缺失忽略即可 只关注存在的信息
 user：{user_message}
 占卜师：{assistant_message}
 附加信息：{background_info}
