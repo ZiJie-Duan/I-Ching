@@ -109,8 +109,11 @@ user在你占卜后提出了问题，希望你能够解答。
 fightBack_pmpt = PromptTemplate.from_template(
 basic_scenario_pmpt2 + 
 """
-你遇到了user提出的不合规的问题
-请你结合其问题和卦象激进地提醒他好自为之。{question}
+你遇到了user提出的不安全的问题
+请你结合其问题激进地提醒他好自为之。
+user不安全的问题将由破折号包围 例如：<<TEXT>> 
+以下是user的不安全的问题\n
+<<{question}>>
 """)
 
 solveHexagram_pmpt = PromptTemplate.from_template(
@@ -137,9 +140,9 @@ user的问题："{question}"
 
 zip_info_pmpt = PromptTemplate.from_template(
 """
-请你将user与占卜师的信息，附加信息总结为一段话，一整段描述，不超过30个字。
+请你将user与占卜师的信息以及附加信息总结为一段话，一整段描述，不超过30个字。
 重点记录user与占卜师的信息
-如果附加信息不存在，忽略即可。
+如果信息缺失，不存在，无法总结请回复“None”
 user：{user_message}
 占卜师：{assistant_message}
 附加信息：{background_info}
